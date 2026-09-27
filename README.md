@@ -100,15 +100,17 @@ Each request returns up to 8 visible books plus one hidden look-ahead record use
 
 The browser-side **Download folder** setting controls these streamed downloads. Native `device.json` downloads continue to use `/Send2Ereader`, because current firmware does not template `download.dest_dir`.
 
-When the CrossPoint web page is reopened, the plugin now validates any saved session before restoring it. Closed, expired, deleted, or otherwise unauthorized saved sessions are cleared locally instead of being shown as active. Session close uses a JSON acknowledgement when the server supports it and verifies closure when older firmware reports an empty successful response as `response truncated`.
+When the CrossPoint web page is reopened, the plugin validates any saved session before restoring it. Closed, expired, deleted, or otherwise unauthorized saved sessions are cleared locally instead of being shown as active. Session close uses a JSON acknowledgement when the server supports it and verifies closure when older firmware reports an empty successful response as `response truncated`.
 
-Its persistent settings live at:
+Persistent browser settings are stored at:
 
 ```text
 /.crosspoint/send2ereader-settings.json
 ```
 
-Diagnostic logging is stored at:
+That is the exact path used by `plugin.js` for the saved server URL, download folder, and browser-side session state.
+
+The current browser UI does **not** include a Debug Log section or log-management buttons. Internal troubleshooting events are still written in the background to:
 
 ```text
 /.crosspoint/send2ereader.log
