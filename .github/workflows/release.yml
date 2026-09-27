@@ -1,0 +1,92 @@
+name: Release Send2Ereader CrossPoint Plugin
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: send2ereader-crosspoint-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read and validate plugin version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python -c 'import json; print(json.load(open("manifest.json", encoding="utf-8"))["version"])')
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "Plugin version in manifest.json must be x.y.z or w.x.y.z; got: $version" >&2
+            exit 1
+          fi
+          tag="v${version}"
+          if [[ "${{ github.event_name }}" == "push" && "${GITHUB_REF_NAME}" != "$tag" ]]; then
+            echo "Pushed tag must match plugin version; pushed=${GITHUB_REF_NAME} expected=${tag}" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "archive=send2ereader-${version}.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Validate plugin files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f manifest.json
+          test -f device.json
+          test -f plugin.js
+          test -f README.md
+
+      - name: Validate plugin JavaScript
+        shell: bash
+        run: node --check plugin.js
+
+      - name: Build release package
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="${{ steps.version.outputs.archive }}"
+
+          mkdir -p release/plugins/send2ereader
+          cp manifest.json device.json plugin.js README.md release/plugins/send2ereader/
+          (
+            cd release
+            zip -qr "../$archive" plugins
+          )
+
+          unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/manifest.json"
+          unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/device.json"
+          unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/plugin.js"
+          unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/README.md"
+
+          unexpected=$(unzip -Z1 "$archive" | grep -vE '^plugins/?$|^plugins/send2ereader/?$|^plugins/send2ereader/(manifest\.json|device\.json|plugin\.js|README\.md)$' || true)
+          if [[ -n "$unexpected" ]]; then
+            echo "Unexpected files in release package:" >&2
+            echo "$unexpected" >&2
+            exit 1
+          fi
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ steps.version.outputs.tag }}"
+          archive="${{ steps.version.outputs.archive }}"
+          gh release create "$tag" "$archive" \
+            --title "$tag" \
+            --generate-notes

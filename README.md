@@ -29,6 +29,33 @@ plugin.js
 README.md
 ```
 
+GitHub releases also provide a versioned package such as `send2ereader-0.1.0.zip`. Extracting that archive at the root of the SD card creates:
+
+```text
+/plugins/send2ereader/
+```
+
+with the four runtime files above inside it.
+
+## Install from the CrossPoint Plugin Store
+
+The easiest installation method is to add the Send2Ereader catalog to the CrossPoint Plugin Store from the device WebUI.
+
+1. Open the CrossPoint device WebUI in a browser.
+2. Open **Settings** and find the **Plugin Store** card.
+3. Under **Stores**, paste this catalog URL:
+
+```text
+https://raw.githubusercontent.com/jadehawk/send2ereader.xp-plugin/main/catalog.json
+```
+
+4. Select **Add store**.
+5. Select **Save & refresh**.
+6. Find **Send2Ereader** in the refreshed catalog and select **Install**.
+7. Reconnect to the device or reopen **Settings** if needed. Send2Ereader will then be available from the Plugins UI and under **Settings > System > Plugins**.
+
+Once the Send2Ereader catalog has been added, future catalog refreshes can expose updated plugin versions from the same URL.
+
 Books are downloaded to:
 
 ```text
