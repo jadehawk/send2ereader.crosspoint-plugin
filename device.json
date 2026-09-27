@@ -1,0 +1,61 @@
+{
+  "title": "Send2Ereader",
+  "token": {
+    "file": "/.pcat_tmp.json",
+    "path": "t"
+  },
+  "browse": {
+    "format": "json",
+    "url": "https://send.techy-notes.com/api/v1/crosspoint/catalog.json?page={page}&limit={limit}",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer {token}",
+      "Accept": "application/json"
+    },
+    "items": "i",
+    "lists": [
+      {
+        "title": "Transfers"
+      }
+    ],
+    "fields": {
+      "title": "n",
+      "author": "a",
+      "id": "d"
+    },
+    "page_size": 8
+  },
+  "download": {
+    "url": "https://send.techy-notes.com/api/v1/files/{id}",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer {token}",
+      "Accept": "application/octet-stream"
+    },
+    "dest_dir": "/Send2Ereader",
+    "filename": "{title}"
+  },
+  "auth": {
+    "request": {
+      "url": "https://send.techy-notes.com/api/v1/crosspoint/device",
+      "method": "POST",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      "body": "{\"client_id\":\"koreader\"}"
+    },
+    "poll": {
+      "url": "https://send.techy-notes.com/api/v1/crosspoint/token",
+      "method": "POST",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      "body": "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:device_code\",\"client_id\":\"koreader\",\"device_code\":\"{device_code}\"}"
+    }
+  },
+  "description": "Open to create a receive session, scan the QR code, then download uploaded books.",
+  "author": "Jadehawk",
+  "version": "0.1.0"
+}

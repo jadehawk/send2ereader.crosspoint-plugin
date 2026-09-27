@@ -1,0 +1,7 @@
+{
+  "title": "Send2Ereader",
+  "mount": "settings",
+  "description": "Create or join a Send2Ereader session and receive books on CrossPoint.",
+  "author": "Jadehawk",
+  "version": "0.1.0"
+}
