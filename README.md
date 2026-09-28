@@ -160,3 +160,7 @@ Direct sending can be added later if the CrossPoint plugin runtime exposes a sui
 If you find the plugin useful, you can support development here:
 
 <https://buymeacoffee.com/jadehawk>
+
+Tutorials, demos, and project updates are available on YouTube:
+
+<https://youtube.com/jadehawk>
