@@ -113,7 +113,7 @@ On X3/X4, **Back from the book list returns to Transfers; Back from the Transfer
 
 This is intentional. The native quick-transfer workflow does not persist a reader token for reuse across plugin launches.
 
-The server-side session itself remains available for its configured lifetime (**30 minutes**) if its code is still known, but reopening the native plugin starts a fresh reader session rather than reconnecting to the previous one.
+The server-side session itself remains available for the lifetime configured by the server administrator (commonly **15 minutes or more**) if its code is still known, but reopening the native plugin starts a fresh reader session rather than reconnecting to the previous one.
 
 ## Pagination and the firmware token-file limit
 
