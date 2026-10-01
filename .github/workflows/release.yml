@@ -49,6 +49,7 @@ jobs:
           test -f device.json
           test -f plugin.js
           test -f README.md
+          test -f CHANGELOG.md
 
       - name: Validate plugin JavaScript
         shell: bash
@@ -79,6 +80,36 @@ jobs:
             exit 1
           fi
 
+      - name: Build release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          VERSION="$version" python - <<'PY'
+          import os
+          from pathlib import Path
+
+          version = os.environ["VERSION"]
+          lines = Path("CHANGELOG.md").read_text(encoding="utf-8").splitlines()
+          heading = f"## [{version}]"
+          try:
+              start = next(i for i, line in enumerate(lines) if line.startswith(heading))
+          except StopIteration:
+              raise SystemExit(f"CHANGELOG.md has no section for {version}")
+
+          body = []
+          for line in lines[start + 1:]:
+              if line.startswith("## "):
+                  break
+              body.append(line)
+
+          notes = "\n".join(body).strip()
+          if not notes:
+              raise SystemExit(f"CHANGELOG.md section for {version} is empty")
+
+          Path("release-notes.md").write_text(notes + "\n", encoding="utf-8")
+          PY
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -89,4 +120,4 @@ jobs:
           archive="${{ steps.version.outputs.archive }}"
           gh release create "$tag" "$archive" \
             --title "$tag" \
-            --generate-notes
+            --notes-file release-notes.md
