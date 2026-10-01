@@ -2,6 +2,17 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.2] - 2026-10-01
+
+### Added
+
+- The browser WebUI now shows the installed plugin version and checks the latest published GitHub release for a newer three-part or four-part version.
+- When a newer release exists, the WebUI displays an **Update available** label with the available version. Older or equal published versions are never presented as updates.
+
+### Changed
+
+- Native CrossPoint device-code authorization now identifies the client as `send2ereader-crosspoint` instead of the legacy `koreader` value.
+
 ## [0.1.1] - 2026-10-01
 
 This release fixes custom server support so the CrossPoint WebUI and native reader plugin now use the same saved server configuration.
