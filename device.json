@@ -60,5 +60,5 @@
   },
   "description": "Open to create a receive session, scan the QR code, then download uploaded books.",
   "author": "Jadehawk",
-  "version": "0.1.2"
+  "version": "0.1.2.1"
 }

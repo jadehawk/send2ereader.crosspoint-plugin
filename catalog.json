@@ -6,8 +6,8 @@
       "title": "Send2Ereader",
       "description": "Create or join a Send2Ereader session and receive books on CrossPoint.",
       "author": "Jadehawk",
-      "version": "0.1.2",
-      "base": "https://raw.githubusercontent.com/jadehawk/send2ereader.xp-plugin/main/",
+      "version": "0.1.2.1",
+      "base": "https://raw.githubusercontent.com/jadehawk/send2ereader.crosspoint-plugin/main/",
       "files": [
         "manifest.json",
         "device.json",

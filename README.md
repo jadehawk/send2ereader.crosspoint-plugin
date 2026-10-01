@@ -29,7 +29,7 @@ plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.2.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.2.1.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
@@ -46,7 +46,7 @@ The easiest installation method is to add the Send2Ereader catalog to the CrossP
 3. Under **Stores**, paste this catalog URL:
 
 ```text
-https://raw.githubusercontent.com/jadehawk/send2ereader.xp-plugin/main/catalog.json
+https://raw.githubusercontent.com/jadehawk/send2ereader.crosspoint-plugin/main/catalog.json
 ```
 
 4. Select **Add store**.

@@ -4,7 +4,7 @@ CrossPoint.registerPlugin(async (container, api) => {
   const DEFAULT_SERVER = 'https://send.techy-notes.com';
   const DEFAULT_DOWNLOAD_DIR = '/Send2Ereader';
   const MANIFEST_PATH = '/.crosspoint/plugins/send2ereader/manifest.json';
-  const RELEASE_API_URL = 'https://api.github.com/repos/jadehawk/send2ereader.xp-plugin/releases/latest';
+  const RELEASE_API_URL = 'https://api.github.com/repos/jadehawk/send2ereader.crosspoint-plugin/releases/latest';
   const MAX_LOG_CHARS = 24000;
 
   container.innerHTML =

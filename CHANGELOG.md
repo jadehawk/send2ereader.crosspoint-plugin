@@ -2,6 +2,13 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.2.1] - 2026-10-01
+
+### Changed
+
+- Publish the independent `send2ereader.crosspoint-plugin` repository for Plugin Hub discovery and installation testing.
+- Point the plugin catalog, README install URL, and WebUI release check at the new repository while preserving the existing `send2ereader` plugin ID and install path.
+
 ## [0.1.2] - 2026-10-01
 
 ### Added
