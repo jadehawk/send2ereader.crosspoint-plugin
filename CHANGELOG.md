@@ -2,6 +2,13 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.3] - 2026-10-01
+
+### Changed
+
+- Return published plugin versions to the three-part `MAJOR.MINOR.PATCH` format used by the CrossPoint firmware plugin catalog.
+- Keep browser-side update comparison backward-compatible with existing four-part installations such as `0.1.2.1`, allowing them to upgrade normally to `0.1.3`.
+
 ## [0.1.2.1] - 2026-10-01
 
 ### Changed
