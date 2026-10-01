@@ -29,7 +29,7 @@ plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.2.1.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.2.2.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
