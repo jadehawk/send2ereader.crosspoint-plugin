@@ -2,12 +2,6 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
-## [0.1.2.2] - 2026-10-01
-
-### Changed
-
-- Publish a version-only test release to verify that Plugin Hub discovers a newer four-part version and offers it as an update over installed v0.1.2.1.
-
 ## [0.1.2.1] - 2026-10-01
 
 ### Changed
