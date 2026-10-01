@@ -29,7 +29,7 @@ plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.0.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.1.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
@@ -67,7 +67,7 @@ Books are downloaded to:
 1. Open **Send2Ereader** from the **Plugins** button on the main/home screen, or from **Settings > System > Plugins > Send2Ereader**.
 2. The plugin creates a new temporary anonymous Send2Ereader session.
 3. The reader displays a QR code and a random `XXX-XXX` code.
-4. Scan the QR code with a phone, or enter the displayed code in the Send2Ereader web UI: <https://send.techy-notes.com>.
+4. Scan the QR code with a phone, or enter the displayed code in the configured Send2Ereader web UI. The default server is <https://send.techy-notes.com>.
 5. When the phone/browser successfully joins that session, the pending CrossPoint authorization is approved automatically.
 6. On its next poll, normally within about three seconds, the reader receives its session-scoped reader token and leaves the QR screen.
 7. The reader opens a single **Transfers** row. Upload, add, or remove books from the phone/browser as needed.
@@ -129,13 +129,13 @@ The browser-side **Download folder** setting controls these streamed downloads. 
 
 When the CrossPoint web page is reopened, the plugin validates any saved session before restoring it. Closed, expired, deleted, or otherwise unauthorized saved sessions are cleared locally instead of being shown as active. Session close uses a JSON acknowledgement when the server supports it and verifies closure when older firmware reports an empty successful response as `response truncated`.
 
-Persistent browser settings are stored at:
+Persistent settings are stored at:
 
 ```text
 /.crosspoint/send2ereader-settings.json
 ```
 
-That is the exact path used by `plugin.js` for the saved server URL, download folder, and browser-side session state.
+The browser settings UI and native CrossPoint `device.json` both use this same file. The WebUI creates it automatically when missing. If the file is malformed, or if `serverUrl` is missing or invalid, the WebUI repairs it with the default `https://send.techy-notes.com` server and clears any saved session credentials that cannot safely be reused. Valid custom server URLs are preserved and are used by native authentication, catalog browsing, and downloads as well as by the browser-side controls.
 
 The current browser UI does **not** include a Debug Log section or log-management buttons. Internal troubleshooting events are still written in the background to:
 

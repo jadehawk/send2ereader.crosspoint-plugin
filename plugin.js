@@ -64,12 +64,12 @@ CrossPoint.registerPlugin(async (container, api) => {
 
   async function readConfig() {
     const raw = await readText(CONFIG_PATH);
-    if (!raw) return {};
+    if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === 'object' ? parsed : {};
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
     } catch (_) {
-      return {};
+      return null;
     }
   }
 
@@ -90,6 +90,46 @@ CrossPoint.registerPlugin(async (container, api) => {
     folder = folder.replace(/\/{2,}/g, '/').replace(/\/$/, '');
     if (!folder || folder.includes('..')) throw new Error('Download folder must be an absolute SD-card path without ..');
     return folder;
+  }
+
+  async function loadAndRepairConfig() {
+    const loaded = await readConfig();
+    const source = loaded || {};
+    let serverUrl = DEFAULT_SERVER;
+    let serverWasValid = false;
+    let downloadDir = DEFAULT_DOWNLOAD_DIR;
+
+    try {
+      if (typeof source.serverUrl === 'string' && source.serverUrl.trim()) {
+        serverUrl = normalizeServer(source.serverUrl);
+        serverWasValid = true;
+      }
+    } catch (_) {
+      serverUrl = DEFAULT_SERVER;
+    }
+
+    try {
+      downloadDir = normalizeFolder(source.downloadDir || DEFAULT_DOWNLOAD_DIR);
+    } catch (_) {
+      downloadDir = DEFAULT_DOWNLOAD_DIR;
+    }
+
+    let next = { ...source, serverUrl, downloadDir };
+    if (!serverWasValid) next = withoutSession(next);
+
+    const needsWrite = !loaded
+      || source.serverUrl !== next.serverUrl
+      || source.downloadDir !== next.downloadDir
+      || (!serverWasValid && !!(source.sessionId || source.catalogKey || source.token || source.ownerKey));
+
+    if (needsWrite) {
+      await saveConfig(next);
+      await log('[settings] repaired', 'server=' + next.serverUrl + ' folder=' + next.downloadDir);
+    } else {
+      state = next;
+    }
+
+    return next;
   }
 
   function normalizeCode(value) {
@@ -252,11 +292,13 @@ CrossPoint.registerPlugin(async (container, api) => {
   }
 
   function settingsFromUi() {
-    return {
+    const serverUrl = normalizeServer(el('s2e-server').value || DEFAULT_SERVER);
+    const next = {
       ...state,
-      serverUrl: normalizeServer(el('s2e-server').value || DEFAULT_SERVER),
+      serverUrl,
       downloadDir: normalizeFolder(el('s2e-folder').value || DEFAULT_DOWNLOAD_DIR),
     };
+    return state.serverUrl && state.serverUrl !== serverUrl ? withoutSession(next) : next;
   }
 
   function withoutSession(config) {
@@ -660,7 +702,7 @@ CrossPoint.registerPlugin(async (container, api) => {
   };
 
 
-  state = await readConfig();
+  state = await loadAndRepairConfig();
   el('s2e-server').value = state.serverUrl || DEFAULT_SERVER;
   el('s2e-folder').value = state.downloadDir || DEFAULT_DOWNLOAD_DIR;
   if (active()) {

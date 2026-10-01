@@ -4,9 +4,12 @@
     "file": "/.pcat_tmp.json",
     "path": "t"
   },
+  "config": {
+    "file": "/.crosspoint/send2ereader-settings.json"
+  },
   "browse": {
     "format": "json",
-    "url": "https://send.techy-notes.com/api/v1/crosspoint/catalog.json?page={page}&limit={limit}",
+    "url": "{cfg.serverUrl}/api/v1/crosspoint/catalog.json?page={page}&limit={limit}",
     "method": "GET",
     "headers": {
       "Authorization": "Bearer {token}",
@@ -26,7 +29,7 @@
     "page_size": 8
   },
   "download": {
-    "url": "https://send.techy-notes.com/api/v1/files/{id}",
+    "url": "{cfg.serverUrl}/api/v1/files/{id}",
     "method": "GET",
     "headers": {
       "Authorization": "Bearer {token}",
@@ -37,7 +40,7 @@
   },
   "auth": {
     "request": {
-      "url": "https://send.techy-notes.com/api/v1/crosspoint/device",
+      "url": "{cfg.serverUrl}/api/v1/crosspoint/device",
       "method": "POST",
       "headers": {
         "Accept": "application/json",
@@ -46,7 +49,7 @@
       "body": "{\"client_id\":\"koreader\"}"
     },
     "poll": {
-      "url": "https://send.techy-notes.com/api/v1/crosspoint/token",
+      "url": "{cfg.serverUrl}/api/v1/crosspoint/token",
       "method": "POST",
       "headers": {
         "Accept": "application/json",
@@ -57,5 +60,5 @@
   },
   "description": "Open to create a receive session, scan the QR code, then download uploaded books.",
   "author": "Jadehawk",
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
