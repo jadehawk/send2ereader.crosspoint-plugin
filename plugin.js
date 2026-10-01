@@ -3,10 +3,13 @@ CrossPoint.registerPlugin(async (container, api) => {
   const LOG_PATH = '/.crosspoint/send2ereader.log';
   const DEFAULT_SERVER = 'https://send.techy-notes.com';
   const DEFAULT_DOWNLOAD_DIR = '/Send2Ereader';
+  const MANIFEST_PATH = '/.crosspoint/plugins/send2ereader/manifest.json';
+  const RELEASE_API_URL = 'https://api.github.com/repos/jadehawk/send2ereader.xp-plugin/releases/latest';
   const MAX_LOG_CHARS = 24000;
 
   container.innerHTML =
     '<h2>Send2Ereader</h2>' +
+    '<p id="s2e-version" style="color:#666">Version: checking...</p>' +
     '<p id="s2e-status">Loading configuration...</p>' +
     '<div class="setting-row"><span class="setting-name">Server URL</span>' +
     '<span class="setting-control"><input type="text" id="s2e-server"></span></div>' +
@@ -76,6 +79,59 @@ CrossPoint.registerPlugin(async (container, api) => {
   async function saveConfig(next) {
     await api.writeFile(CONFIG_PATH, b64(JSON.stringify(next, null, 2)));
     state = next;
+  }
+
+  function parseVersion(value) {
+    const match = String(value || '').trim().match(/^v?(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?$/);
+    if (!match) return null;
+    return [Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4] || 0)];
+  }
+
+  function compareVersions(leftValue, rightValue) {
+    const left = parseVersion(leftValue);
+    const right = parseVersion(rightValue);
+    if (!left || !right) return null;
+    for (let index = 0; index < left.length; index += 1) {
+      if (left[index] > right[index]) return 1;
+      if (left[index] < right[index]) return -1;
+    }
+    return 0;
+  }
+
+  async function checkForUpdate() {
+    const versionEl = el('s2e-version');
+    let installedVersion = '';
+    try {
+      const manifestRaw = await readText(MANIFEST_PATH);
+      if (!manifestRaw) throw new Error('Installed manifest is unavailable');
+      const manifest = JSON.parse(manifestRaw);
+      installedVersion = String(manifest.version || '').trim();
+      if (!parseVersion(installedVersion)) throw new Error('Installed version is invalid');
+
+      versionEl.textContent = 'Version: v' + installedVersion;
+      versionEl.style.color = '#666';
+
+      const response = await relay('GET', RELEASE_API_URL, {
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'Send2Ereader-CrossPoint',
+      }, '');
+      if (response.error || (response.status && (Number(response.status) < 200 || Number(response.status) >= 300))) {
+        throw new Error('Release check returned HTTP ' + (response.status || response.error));
+      }
+
+      const release = response.body ? JSON.parse(response.body) : {};
+      const latestVersion = String(release.tag_name || '').trim().replace(/^v/i, '');
+      const comparison = compareVersions(latestVersion, installedVersion);
+      if (comparison === null) throw new Error('Release version is invalid');
+
+      if (comparison > 0) {
+        versionEl.textContent = 'Version: v' + installedVersion + ' — Update available: v' + latestVersion;
+        versionEl.style.color = '#c0392b';
+      }
+    } catch (error) {
+      if (!installedVersion) versionEl.textContent = 'Version: unavailable';
+      await log('[update] check skipped', error.message);
+    }
   }
 
   function normalizeServer(value) {
@@ -705,6 +761,7 @@ CrossPoint.registerPlugin(async (container, api) => {
   state = await loadAndRepairConfig();
   el('s2e-server').value = state.serverUrl || DEFAULT_SERVER;
   el('s2e-folder').value = state.downloadDir || DEFAULT_DOWNLOAD_DIR;
+  await checkForUpdate();
   if (active()) {
     try {
       await validateStoredSession();

@@ -46,7 +46,7 @@
         "Accept": "application/json",
         "Content-Type": "application/json"
       },
-      "body": "{\"client_id\":\"koreader\"}"
+      "body": "{\"client_id\":\"send2ereader-crosspoint\"}"
     },
     "poll": {
       "url": "{cfg.serverUrl}/api/v1/crosspoint/token",
@@ -55,10 +55,10 @@
         "Accept": "application/json",
         "Content-Type": "application/json"
       },
-      "body": "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:device_code\",\"client_id\":\"koreader\",\"device_code\":\"{device_code}\"}"
+      "body": "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:device_code\",\"client_id\":\"send2ereader-crosspoint\",\"device_code\":\"{device_code}\"}"
     }
   },
   "description": "Open to create a receive session, scan the QR code, then download uploaded books.",
   "author": "Jadehawk",
-  "version": "0.1.1"
+  "version": "0.1.2"
 }
