@@ -29,7 +29,7 @@ plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.3.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.4.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
@@ -123,7 +123,7 @@ Each request returns up to 8 visible books plus one hidden look-ahead record use
 
 ## Optional browser settings plugin
 
-`plugin.js` provides the browser/settings-side Send2Ereader controls for configuration and manual session management. The page shows the installed plugin version and checks the latest published GitHub release; an **Update available** label appears only when the published release version is numerically newer than the installed version. Published Send2Ereader releases now use three-part `MAJOR.MINOR.PATCH` versions. The browser comparator still accepts legacy four-part installed versions so existing `0.1.2.1` installations can upgrade normally to `0.1.3` and later releases, and it quietly falls back to the installed version when GitHub cannot be reached. With a session active, the WebUI also shows the current session books, can refresh the catalog without leaving the page, and can download one book or all listed books directly to the SD card using CrossPoint's streamed `fetchToSd` API. While a book is streaming, the page polls the destination folder and shows the current percentage and transferred bytes. Completed files are detected by filename and expected size, and their per-book control changes to a disabled **Downloaded** button, including after the page is reopened or the catalog is refreshed.
+`plugin.js` provides the browser/settings-side Send2Ereader controls for configuration and manual session management. The page shows the installed plugin version and checks the latest published GitHub release; an **Update available** label appears only when the published release version is numerically newer than the installed version. On firmware that exposes the newer `api.dir` plugin-directory API, the WebUI reads its own `manifest.json` from its actual runtime directory. Older firmware remains supported by falling back to `/.crosspoint/plugins/send2ereader/manifest.json`. Published Send2Ereader releases now use three-part `MAJOR.MINOR.PATCH` versions. The browser comparator still accepts legacy four-part installed versions so existing `0.1.2.1` installations can upgrade normally to `0.1.3` and later releases, and it quietly falls back to the installed version when GitHub cannot be reached. With a session active, the WebUI also shows the current session books, can refresh the catalog without leaving the page, and can download one book or all listed books directly to the SD card using CrossPoint's streamed `fetchToSd` API. While a book is streaming, the page polls the destination folder and shows the current percentage and transferred bytes. Completed files are detected by filename and expected size, and their per-book control changes to a disabled **Downloaded** button, including after the page is reopened or the catalog is refreshed.
 
 The browser-side **Download folder** setting controls these streamed downloads. Native `device.json` downloads continue to use `/Send2Ereader`, because current firmware does not template `download.dest_dir`.
 

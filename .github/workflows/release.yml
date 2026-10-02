@@ -55,6 +55,10 @@ jobs:
         shell: bash
         run: node --check plugin.js
 
+      - name: Run browser plugin tests
+        shell: bash
+        run: node --test tests/test_plugin_js.mjs
+
       - name: Build release package
         shell: bash
         run: |

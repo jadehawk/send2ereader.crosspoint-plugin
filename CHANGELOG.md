@@ -2,6 +2,15 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.4] - 2026-10-01
+
+### Changed
+
+- Use the newer firmware `api.dir` plugin-directory API when available to locate Send2Ereader's own `manifest.json` for WebUI self-version detection.
+- Keep older firmware compatible by falling back to `/.crosspoint/plugins/send2ereader/manifest.json` when `api.dir` is unavailable.
+- Keep the shared `/.crosspoint/send2ereader-settings.json` configuration and `/.crosspoint/send2ereader.log` paths unchanged because the native `device.json` and browser UI share that configuration.
+- Add browser regression tests covering both legacy firmware and the newer `api.dir` API shape.
+
 ## [0.1.3] - 2026-10-01
 
 ### Changed
