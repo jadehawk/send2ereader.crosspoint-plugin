@@ -17,7 +17,7 @@ CrossPoint.registerPlugin(async (container, api) => {
     '<p id="s2e-version" style="color:#666">Version: checking...</p>' +
     '<p id="s2e-status">Loading configuration...</p>' +
     '<div class="setting-row"><span class="setting-name">Server URL</span>' +
-    '<span class="setting-control"><input type="text" id="s2e-server"></span></div>' +
+    '<span class="setting-control"><input type="text" id="s2e-server" readonly aria-readonly="true" title="Fixed Send2Ereader service"></span></div>' +
     '<div class="setting-row"><span class="setting-name">Download folder</span>' +
     '<span class="setting-control"><input type="text" id="s2e-folder"></span></div>' +
     '<div class="setting-row">' +
@@ -157,13 +157,14 @@ CrossPoint.registerPlugin(async (container, api) => {
     const loaded = await readConfig();
     const source = loaded || {};
     let serverUrl = DEFAULT_SERVER;
-    let serverWasValid = false;
+    let serverWasValid = source.serverUrl === DEFAULT_SERVER;
+
     let downloadDir = DEFAULT_DOWNLOAD_DIR;
 
     try {
       if (typeof source.serverUrl === 'string' && source.serverUrl.trim()) {
         serverUrl = normalizeServer(source.serverUrl);
-        serverWasValid = true;
+        serverWasValid = serverUrl === DEFAULT_SERVER;
       }
     } catch (_) {
       serverUrl = DEFAULT_SERVER;
@@ -175,7 +176,7 @@ CrossPoint.registerPlugin(async (container, api) => {
       downloadDir = DEFAULT_DOWNLOAD_DIR;
     }
 
-    let next = { ...source, serverUrl, downloadDir };
+    let next = { ...source, serverUrl: DEFAULT_SERVER, downloadDir };
     if (!serverWasValid) next = withoutSession(next);
 
     const needsWrite = !loaded
@@ -353,7 +354,7 @@ CrossPoint.registerPlugin(async (container, api) => {
   }
 
   function settingsFromUi() {
-    const serverUrl = normalizeServer(el('s2e-server').value || DEFAULT_SERVER);
+    const serverUrl = DEFAULT_SERVER;
     const next = {
       ...state,
       serverUrl,

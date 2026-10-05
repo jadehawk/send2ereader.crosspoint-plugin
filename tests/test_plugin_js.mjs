@@ -4,6 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const source = await readFile(new URL('../plugin.js', import.meta.url), 'utf8');
+const PRODUCTION_SERVER = 'https://send.techy-notes.com';
 
 function fakeDocument() {
   const elements = new Map();
@@ -30,7 +31,13 @@ function fakeDocument() {
   };
 }
 
-async function runPlugin(apiDir) {
+function decodeLastConfigWrite(writes) {
+  const write = [...writes].reverse().find((item) => item.path === '/.crosspoint/send2ereader-settings.json');
+  assert.ok(write, 'expected a settings write');
+  return JSON.parse(Buffer.from(write.data, 'base64').toString('utf8'));
+}
+
+async function runPlugin(apiDir, settingsServer = PRODUCTION_SERVER) {
   let renderPlugin;
   const document = fakeDocument();
   const downloadPaths = [];
@@ -46,8 +53,11 @@ async function runPlugin(apiDir) {
           ok: true,
           async text() {
             return JSON.stringify({
-              serverUrl: 'https://send.techy-notes.com',
+              serverUrl: settingsServer,
               downloadDir: '/Send2Ereader',
+              ...(settingsServer === PRODUCTION_SERVER
+                ? {}
+                : { sessionId: 'old-session', catalogKey: 'old-key', ownerKey: 'old-owner' }),
             });
           },
         };
@@ -60,7 +70,7 @@ async function runPlugin(apiDir) {
         return {
           ok: true,
           async text() {
-            return JSON.stringify({ version: '0.1.4' });
+            return JSON.stringify({ version: '0.1.5' });
           },
         };
       }
@@ -113,7 +123,7 @@ async function runPlugin(apiDir) {
     async relay(method, url) {
       assert.equal(method, 'GET');
       assert.match(url, /send2ereader\.crosspoint-plugin\/releases\/latest$/);
-      return { status: 200, body: JSON.stringify({ tag_name: 'v0.1.4' }) };
+      return { status: 200, body: JSON.stringify({ tag_name: 'v0.1.5' }) };
     },
     async fetchToSd() {
       return { status: 200 };
@@ -124,11 +134,17 @@ async function runPlugin(apiDir) {
   return { document, downloadPaths, writes };
 }
 
-test('legacy firmware keeps the historical manifest path', async () => {
+test('legacy firmware keeps the historical manifest path and locks the production server', async () => {
   const result = await runPlugin();
   assert.ok(result.downloadPaths.includes('/.crosspoint/plugins/send2ereader/manifest.json'));
   assert.ok(result.downloadPaths.includes('/.crosspoint/send2ereader-settings.json'));
-  assert.equal(result.document.elements.get('s2e-version').textContent, 'Version: v0.1.4');
+  assert.equal(result.document.elements.get('s2e-version').textContent, 'Version: v0.1.5');
+  assert.match(source, /id="s2e-server" readonly/);
+
+  result.document.elements.get('s2e-server').value = 'https://send-beta.techy-notes.com';
+  await result.document.elements.get('s2e-save').onclick();
+  const saved = decodeLastConfigWrite(result.writes);
+  assert.equal(saved.serverUrl, PRODUCTION_SERVER);
 });
 
 test('api.dir firmware reads the manifest from the actual plugin directory', async () => {
@@ -136,5 +152,16 @@ test('api.dir firmware reads the manifest from the actual plugin directory', asy
   assert.ok(result.downloadPaths.includes('/plugins/send2ereader/manifest.json'));
   assert.ok(!result.downloadPaths.includes('/.crosspoint/plugins/send2ereader/manifest.json'));
   assert.ok(result.downloadPaths.includes('/.crosspoint/send2ereader-settings.json'));
-  assert.equal(result.document.elements.get('s2e-version').textContent, 'Version: v0.1.4');
+  assert.equal(result.document.elements.get('s2e-version').textContent, 'Version: v0.1.5');
+});
+
+test('existing custom server settings are repaired back to production and old session credentials are cleared', async () => {
+  const result = await runPlugin(undefined, 'https://send-beta.techy-notes.com');
+  assert.ok(result.writes.length > 0);
+  const repaired = decodeLastConfigWrite(result.writes);
+  assert.equal(repaired.serverUrl, PRODUCTION_SERVER);
+  assert.equal(repaired.downloadDir, '/Send2Ereader');
+  assert.ok(!('sessionId' in repaired));
+  assert.ok(!('catalogKey' in repaired));
+  assert.ok(!('ownerKey' in repaired));
 });
