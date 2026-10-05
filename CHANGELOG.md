@@ -2,6 +2,13 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.5] - 2026-10-04
+
+### Fixed
+
+- Restore the native CrossPoint service endpoints to the production `https://send.techy-notes.com` host so a fresh install can start a receive session before the WebUI has created `/.crosspoint/send2ereader-settings.json`.
+- Remove the native `device.json` dependency on `serverUrl`; the WebUI now shows the production server URL as read-only and normalizes any older custom server value back to `https://send.techy-notes.com`, clearing session credentials tied to the old host.
+
 ## [0.1.4] - 2026-10-01
 
 ### Changed

@@ -29,7 +29,7 @@ plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.4.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.5.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
@@ -135,7 +135,7 @@ Persistent settings are stored at:
 /.crosspoint/send2ereader-settings.json
 ```
 
-The browser settings UI and native CrossPoint `device.json` both use this same file. The WebUI creates it automatically when missing. If the file is malformed, or if `serverUrl` is missing or invalid, the WebUI repairs it with the default `https://send.techy-notes.com` server and clears any saved session credentials that cannot safely be reused. Valid custom server URLs are preserved and are used by native authentication, catalog browsing, and downloads as well as by the browser-side controls.
+The WebUI creates this file automatically when missing. The production server is fixed at `https://send.techy-notes.com`: the Server URL is shown in the WebUI as read-only, and any older settings file containing a different server is normalized back to production with session credentials for the old host cleared. Native CrossPoint authentication, catalog browsing, and downloads do not depend on this settings file, so a fresh plugin install works before WebUI Settings has ever been opened.
 
 The current browser UI does **not** include a Debug Log section or log-management buttons. Internal troubleshooting events are still written in the background to:
 
