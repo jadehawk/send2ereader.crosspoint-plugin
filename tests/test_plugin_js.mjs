@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const source = await readFile(new URL('../plugin.js', import.meta.url), 'utf8');
+const source = await readFile(new URL('../send2ereader.crosspoint-plugin/plugin.js', import.meta.url), 'utf8');
 const PRODUCTION_SERVER = 'https://send.techy-notes.com';
 
 function fakeDocument() {

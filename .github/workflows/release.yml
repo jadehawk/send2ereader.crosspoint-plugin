@@ -27,9 +27,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          version=$(python -c 'import json; print(json.load(open("manifest.json", encoding="utf-8"))["version"])')
+          version=$(python -c 'import json; print(json.load(open("send2ereader.crosspoint-plugin/manifest.json", encoding="utf-8"))["version"])')
           if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Plugin version in manifest.json must be MAJOR.MINOR.PATCH; got: $version" >&2
+            echo "Plugin version in send2ereader.crosspoint-plugin/manifest.json must be MAJOR.MINOR.PATCH; got: $version" >&2
             exit 1
           fi
           tag="v${version}"
@@ -45,15 +45,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f manifest.json
-          test -f device.json
-          test -f plugin.js
+          test -f send2ereader.crosspoint-plugin/manifest.json
+          test -f send2ereader.crosspoint-plugin/device.json
+          test -f send2ereader.crosspoint-plugin/plugin.js
+          test -f send2ereader.crosspoint-plugin/README.md
           test -f README.md
+          cmp -s README.md send2ereader.crosspoint-plugin/README.md
           test -f CHANGELOG.md
 
       - name: Validate plugin JavaScript
         shell: bash
-        run: node --check plugin.js
+        run: node --check send2ereader.crosspoint-plugin/plugin.js
 
       - name: Run browser plugin tests
         shell: bash
@@ -66,7 +68,7 @@ jobs:
           archive="${{ steps.version.outputs.archive }}"
 
           mkdir -p release/plugins/send2ereader
-          cp manifest.json device.json plugin.js README.md release/plugins/send2ereader/
+          cp send2ereader.crosspoint-plugin/manifest.json send2ereader.crosspoint-plugin/device.json send2ereader.crosspoint-plugin/plugin.js send2ereader.crosspoint-plugin/README.md release/plugins/send2ereader/
           (
             cd release
             zip -qr "../$archive" plugins

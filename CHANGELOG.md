@@ -2,6 +2,14 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.6] - 2026-10-07
+
+### Changed
+
+- Adopt the Plugin Hub folder-first repository standard by moving the installable payload into `send2ereader.crosspoint-plugin/` while preserving the installed `/plugins/send2ereader/` layout.
+- Keep the plugin README inside the installable payload so it travels with catalog and release installs; retain an identical root README for the GitHub repository landing page.
+- Add explicit manifest `name` and `files` metadata and point the repository catalog at the payload directory.
+
 ## [0.1.5] - 2026-10-04
 
 ### Fixed
