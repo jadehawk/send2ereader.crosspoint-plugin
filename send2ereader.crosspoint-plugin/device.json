@@ -1,5 +1,5 @@
 {
-  "title": "Send2Ereader",
+  "title": "Send2Ereader v0.1.7",
   "token": {
     "file": "/.pcat_tmp.json",
     "path": "t"
@@ -23,7 +23,26 @@
       "author": "a",
       "id": "d"
     },
-    "page_size": 8
+    "page_size": 16,
+    "refresh": true,
+    "view": "{cfg.layout}",
+    "grid_columns": "{cfg.grid_columns}",
+    "grid_rows": "{cfg.grid_rows}",
+    "grid_page_size": "16",
+    "list_page_size": "16",
+    "list_thumbnail": "{cfg.list_thumbnails}",
+    "hide_pagination": "{cfg.hide_pagination}",
+    "selection_style": "{cfg.selection_style}",
+    "image": {
+      "url": "https://send.techy-notes.com/api/v1/files/{id}/cover?variant=crosspoint",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Accept": "image/*"
+      },
+      "format": "auto",
+      "radius": 4
+    }
   },
   "download": {
     "url": "https://send.techy-notes.com/api/v1/files/{id}",
@@ -36,6 +55,9 @@
     "filename": "{title}"
   },
   "auth": {
+    "display_url": "https://send.techy-notes.com",
+    "qr_hint": "Scan QR to join this session",
+    "manual_hint": "Or open the server, choose \"Join Session\", and enter the code above",
     "request": {
       "url": "https://send.techy-notes.com/api/v1/crosspoint/device",
       "method": "POST",
@@ -55,7 +77,126 @@
       "body": "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:device_code\",\"client_id\":\"send2ereader-crosspoint\",\"device_code\":\"{device_code}\"}"
     }
   },
-  "description": "Open to create a receive session, scan the QR code, then download uploaded books.",
+  "description": "Create a Send2Ereader receive session, scan or manually join it from another device, then browse and download transferred books.",
   "author": "Jadehawk",
-  "version": "0.1.6"
+  "version": "0.1.7",
+  "config": {
+    "file": "settings.json"
+  },
+  "ui": {
+    "default_tab": "transfers",
+    "tabs": [
+      {
+        "id": "transfers",
+        "title": "Transfers",
+        "type": "browse"
+      },
+      {
+        "id": "settings",
+        "title": "Settings",
+        "type": "settings"
+      }
+    ]
+  },
+  "settings": [
+    {
+      "key": "layout",
+      "title": "Layout",
+      "type": "choice",
+      "default": "list",
+      "options": [
+        {
+          "title": "List",
+          "value": "list"
+        },
+        {
+          "title": "Grid",
+          "value": "grid"
+        }
+      ]
+    },
+    {
+      "key": "grid_columns",
+      "title": "Grid columns",
+      "type": "choice",
+      "default": "2",
+      "options": [
+        {
+          "title": "1 column",
+          "value": "1"
+        },
+        {
+          "title": "2 columns",
+          "value": "2"
+        },
+        {
+          "title": "3 columns",
+          "value": "3"
+        },
+        {
+          "title": "4 columns",
+          "value": "4"
+        }
+      ]
+    },
+    {
+      "key": "grid_rows",
+      "title": "Grid rows",
+      "type": "choice",
+      "default": "2",
+      "options": [
+        {
+          "title": "1 row",
+          "value": "1"
+        },
+        {
+          "title": "2 rows",
+          "value": "2"
+        },
+        {
+          "title": "3 rows",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "key": "list_thumbnails",
+      "title": "Show covers in list view",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "hide_pagination",
+      "title": "Hide pagination buttons",
+      "type": "toggle",
+      "default": false,
+      "visible_if": {
+        "device_capability": "touch"
+      }
+    },
+    {
+      "key": "selection_style",
+      "title": "Row highlight",
+      "type": "choice",
+      "default": "light",
+      "options": [
+        {
+          "title": "Light",
+          "value": "light"
+        },
+        {
+          "title": "Theme",
+          "value": "theme"
+        },
+        {
+          "title": "Outline",
+          "value": "outline"
+        },
+        {
+          "title": "Dark",
+          "value": "dark"
+        }
+      ]
+    }
+  ]
 }

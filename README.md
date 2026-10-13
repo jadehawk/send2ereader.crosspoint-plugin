@@ -27,17 +27,18 @@ The payload contains:
 ```text
 manifest.json
 device.json
+settings.json
 plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.6.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.7.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
 ```
 
-with the four runtime files above inside it.
+with the five runtime files above inside it.
 
 ## Install from the CrossPoint Plugin Store
 

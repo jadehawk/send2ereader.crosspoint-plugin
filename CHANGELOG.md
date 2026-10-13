@@ -2,6 +2,15 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.7] - 2026-10-13
+
+### Changed
+
+- Promote the tested Razor-Crest catalog UI to the production plugin with 16-item catalog pages, grid/list layouts, cover thumbnails, manual refresh, and configurable row highlighting.
+- Add touch-only `Hide pagination buttons` support while keeping Refresh available and preserving physical-button navigation.
+- Improve session authentication presentation with the server URL, QR join hint, and manual Join Session fallback text.
+- Include `settings.json` in catalog installs and release ZIPs, and show `v0.1.7` in the plugin title.
+
 ## [0.1.6] - 2026-10-07
 
 ### Changed

@@ -1,0 +1,8 @@
+{
+  "layout": "list",
+  "grid_columns": "2",
+  "grid_rows": "2",
+  "list_thumbnails": true,
+  "hide_pagination": false,
+  "selection_style": "light"
+}
