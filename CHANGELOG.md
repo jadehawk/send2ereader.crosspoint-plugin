@@ -10,6 +10,8 @@ All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 - Add touch-only `Hide pagination buttons` support while keeping Refresh available and preserving physical-button navigation.
 - Improve session authentication presentation with the server URL, QR join hint, and manual Join Session fallback text.
 - Include `settings.json` in catalog installs and release ZIPs, and show `v0.1.7` in the plugin title.
+- Document the single-package dual-mode behavior for baseline and capability-aware firmware, including enhanced grid/list covers, Refresh, touch swipe paging, and touch-only hidden pagination.
+- Replace obsolete store-based installation instructions with the firmware-agnostic **Plugin Hub** workflow.
 
 ## [0.1.6] - 2026-10-07
 
@@ -87,4 +89,4 @@ This release fixes custom server support so the CrossPoint WebUI and native read
 - Download books directly to `/Send2Ereader` on the SD card.
 - Join existing Send2Ereader sessions from the browser settings plugin.
 - Configure the Send2Ereader server URL and browser-side download folder.
-- Install through the CrossPoint Plugin Store catalog or a versioned GitHub release ZIP.
+- Install through Plugin Hub or a versioned GitHub release ZIP.

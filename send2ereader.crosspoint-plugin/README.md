@@ -1,8 +1,17 @@
 # Send2Ereader for CrossPoint
 
-Send2Ereader for CrossPoint is a native receive plugin for CrossPoint X3/X4 devices. It creates a short-lived anonymous Send2Ereader session on the reader, shows a QR code and six-character session code, and lets a phone or browser upload books into that session for direct download to the SD card.
+Send2Ereader for CrossPoint is a native receive plugin for supported CrossPoint devices. It creates a short-lived anonymous Send2Ereader session on the reader, shows a QR code and six-character session code, and lets a phone or browser upload books into that session for direct download to the SD card.
 
 No Send2Ereader account is required for the normal receive workflow.
+
+## Dual-mode compatibility
+
+Version **0.1.7** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
+
+- **Baseline plugin firmware:** keeps the core native receive flow: create a session, show the QR/session code, browse transferred books in the standard list UI, page through the catalog, and download books to `/Send2Ereader`.
+- **Capability-aware/enhanced firmware:** the same package automatically enables 16-item catalog pages, list or grid layouts, book-cover thumbnails, configurable grid dimensions and row highlighting, an explicit **Refresh** action, and improved QR/manual-join presentation.
+- **Touch-capable enhanced devices:** expose the touch-only **Hide pagination buttons** setting. When pagination is hidden, vertical swipes move by the next or previous visible batch; crossing the end or beginning of the fetched page advances to Next or Previous. **Refresh remains available**, and physical-button navigation is unchanged.
+- Enhanced-only fields are declarative capabilities. Firmware that does not support them ignores them and continues using the baseline behavior from the same `device.json`.
 
 ## Runtime payload
 
@@ -40,24 +49,17 @@ GitHub releases also provide a versioned package such as `send2ereader-0.1.7.zip
 
 with the five runtime files above inside it.
 
-## Install from the CrossPoint Plugin Store
+## Install with Plugin Hub
 
-The easiest installation method is to add the Send2Ereader catalog to the CrossPoint Plugin Store from the device WebUI.
+Plugin Hub is the preferred installation and update path.
 
-1. Open the CrossPoint device WebUI in a browser.
-2. Open **Settings** and find the **Plugin Store** card.
-3. Under **Stores**, paste this catalog URL:
+1. Enable the device plugin system if it is not already enabled.
+2. Open **Plugins** and launch **Plugin Hub**.
+3. Open the Community catalog and refresh it if needed.
+4. Find **Send2Ereader v0.1.7** and choose **Install** or **Update**.
+5. Open Send2Ereader from the device Plugins UI after installation.
 
-```text
-https://raw.githubusercontent.com/jadehawk/send2ereader.crosspoint-plugin/main/catalog.json
-```
-
-4. Select **Add store**.
-5. Select **Save & refresh**.
-6. Find **Send2Ereader** in the refreshed catalog and select **Install**.
-7. Reconnect to the device or reopen **Settings** if needed. Send2Ereader will then be available from the Plugins UI and under **Settings > System > Plugins**.
-
-Once the Send2Ereader catalog has been added, future catalog refreshes can expose updated plugin versions from the same URL.
+Plugin Hub discovers the published plugin release and handles the installable payload; users do not need to add a separate store URL manually. The versioned GitHub ZIP remains available as a manual installation fallback.
 
 Books are downloaded to:
 
@@ -80,27 +82,19 @@ The one-time device code, the CrossPoint reader token, the browser uploader toke
 
 ## Catalog and refresh behavior
 
-The native catalog shows **8 books per page**. The picker contains a single neutral row:
+The Send2Ereader picker contains a single neutral **Transfers** row. Opening it fetches the current session catalog. Version 0.1.7 requests up to **16 books per catalog page**.
 
 ```text
 Transfers
 ```
 
-Current CrossPoint firmware uses the selected `browse.lists[]` row as the next catalog page title, so **Transfers** is intentionally both the picker action and the catalog title.
 
-On button-based **X3/X4** devices, **Back** from the book list returns to the Transfers row. Opening it again performs a fresh catalog request, so newly uploaded books appear and books removed from the active web session disappear.
 
-For sessions with **9 or more books**, using **Next page** or **Previous page** also performs a fresh catalog request, so additions and removals are reflected while paging.
+On baseline firmware, the standard native list and normal pagination remain available. Re-entering **Transfers** or changing catalog pages performs another request, so additions and removals from the active web session can be reflected without changing the plugin package.
 
-### Current touch-device firmware limitation
+On capability-aware/enhanced firmware, the same catalog can be shown as a list or grid with book covers. The footer provides **Refresh** independently of Prev/Next pagination, and refresh keeps the current browse context while fetching current session contents.
 
-Current CrossPoint firmware does not expose an on-screen **Back** equivalent inside the generic `PluginCatalogActivity` on touch-only devices such as the **Xteink X4Pro** and **Seeed reTerminal Sticky**. This is a CrossPoint plugin-system limitation, not a Send2Ereader-specific behavior; the same navigation trap can be reproduced in other declarative catalog plugins such as BookFusion.
-
-On those touch devices:
-
-- With **8 or fewer books**, there is no Next/Previous pager row and no touch Back control to return to **Transfers**. To fetch a changed list, exit Send2Ereader and reopen it. Because Send2Ereader sessions are intentionally ephemeral, reopening creates a **new session and QR code**.
-- With **9 or more books**, **Next/Previous** remains usable and each page change fetches fresh catalog data, so additions and removals can be observed without reopening the plugin.
-- An empty catalog has the same limitation: without a pager row or physical Back button, the user must exit and reopen the plugin.
+On touch-capable enhanced devices, **Hide pagination buttons** appears only when the firmware reports touch capability. With pagination hidden, swipe **up** moves to the next visible batch and swipe **down** moves to the previous visible batch. At a fetched-page boundary, the same gesture advances to Next or Previous. This is viewport scrolling, not cover-by-cover focus movement. Physical-button behavior is unchanged.
 
 ## Session lifecycle
 
@@ -120,9 +114,9 @@ The server-side session itself remains available for the lifetime configured by 
 
 ## Pagination and the firmware token-file limit
 
-CrossPoint reloads its bearer token from `/.pcat_tmp.json` before fetching another catalog page, and the current firmware limits that token file to 2 KB. Send2Ereader therefore uses a compact CrossPoint-only catalog response.
+CrossPoint reloads its bearer token from `/.pcat_tmp.json` before catalog requests, so Send2Ereader keeps the native response compact. Version 0.1.7 uses a 16-item catalog page size while preserving the session-scoped token and filename-extension behavior.
 
-Each request returns up to 8 visible books plus one hidden look-ahead record used to determine whether **Next page** should be shown. The server keeps the serialized native response below the firmware limit and only shortens unusually long displayed filenames when necessary, preserving the file extension.
+Enhanced layouts may display fewer than 16 books at once depending on the configured grid/list viewport. Swipe navigation advances through those visible batches inside the already fetched page before crossing the boundary to the next or previous catalog page.
 
 ## Optional browser settings plugin
 
