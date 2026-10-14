@@ -69,7 +69,7 @@ jobs:
           archive="${{ steps.version.outputs.archive }}"
 
           mkdir -p release/plugins/send2ereader
-          cp send2ereader.crosspoint-plugin/manifest.json send2ereader.crosspoint-plugin/device.json send2ereader.crosspoint-plugin/settings.json send2ereader.crosspoint-plugin/plugin.js send2ereader.crosspoint-plugin/README.md release/plugins/send2ereader/
+          cp send2ereader.crosspoint-plugin/manifest.json send2ereader.crosspoint-plugin/device.json send2ereader.crosspoint-plugin/settings.json send2ereader.crosspoint-plugin/plugin.js send2ereader.crosspoint-plugin/README.md send2ereader.crosspoint-plugin/DETAILS.md release/plugins/send2ereader/
           (
             cd release
             zip -qr "../$archive" plugins
@@ -80,8 +80,9 @@ jobs:
           unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/settings.json"
           unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/plugin.js"
           unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/README.md"
+          unzip -Z1 "$archive" | grep -Fxq "plugins/send2ereader/DETAILS.md"
 
-          unexpected=$(unzip -Z1 "$archive" | grep -vE '^plugins/?$|^plugins/send2ereader/?$|^plugins/send2ereader/(manifest\.json|device\.json|settings\.json|plugin\.js|README\.md)$' || true)
+          unexpected=$(unzip -Z1 "$archive" | grep -vE '^plugins/?$|^plugins/send2ereader/?$|^plugins/send2ereader/(manifest\.json|device\.json|settings\.json|plugin\.js|README\.md|DETAILS\.md)$' || true)
           if [[ -n "$unexpected" ]]; then
             echo "Unexpected files in release package:" >&2
             echo "$unexpected" >&2

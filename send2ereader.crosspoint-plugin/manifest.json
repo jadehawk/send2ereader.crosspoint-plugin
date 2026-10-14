@@ -10,6 +10,7 @@
     "device.json",
     "settings.json",
     "plugin.js",
-    "README.md"
+    "README.md",
+    "DETAILS.md"
   ]
 }

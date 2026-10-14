@@ -38,6 +38,7 @@ device.json
 settings.json
 plugin.js
 README.md
+DETAILS.md
 ```
 
 GitHub releases also provide a versioned package such as `send2ereader-0.1.8.zip`. Extracting that archive at the root of the SD card creates:
@@ -46,7 +47,7 @@ GitHub releases also provide a versioned package such as `send2ereader-0.1.8.zip
 /plugins/send2ereader/
 ```
 
-with the five runtime files above inside it.
+with the six runtime files above inside it.
 
 ## Install with Plugin Hub
 
