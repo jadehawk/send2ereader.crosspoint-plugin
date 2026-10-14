@@ -2,6 +2,12 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.9] - 2026-10-14
+
+### Changed
+
+- Ship curated `DETAILS.md` content in the installable/release payload so capable firmware can show the richer Plugin Hub Details view while older firmware continues to ignore the additive metadata.
+
 ## [0.1.8] - 2026-10-14
 
 ### Changed

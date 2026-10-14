@@ -3,10 +3,10 @@
   "plugins": [
     {
       "name": "send2ereader",
-      "title": "Send2Ereader v0.1.8",
+      "title": "Send2Ereader v0.1.9",
       "description": "Create or join a Send2Ereader session and receive books on CrossPoint.",
       "author": "Jadehawk",
-      "version": "0.1.8",
+      "version": "0.1.9",
       "base": "https://raw.githubusercontent.com/jadehawk/send2ereader.crosspoint-plugin/main/send2ereader.crosspoint-plugin/",
       "files": [
         "manifest.json",
