@@ -6,11 +6,10 @@ No Send2Ereader account is required for the normal receive workflow.
 
 ## Dual-mode compatibility
 
-Version **0.1.7** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
+Version **0.1.8** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
 
 - **Baseline plugin firmware:** keeps the core native receive flow: create a session, show the QR/session code, browse transferred books in the standard list UI, page through the catalog, and download books to `/Send2Ereader`.
-- **Capability-aware/enhanced firmware:** the same package automatically enables 16-item catalog pages, list or grid layouts, book-cover thumbnails, configurable grid dimensions and row highlighting, an explicit **Refresh** action, and improved QR/manual-join presentation.
-- **Touch-capable enhanced devices:** expose the touch-only **Hide pagination buttons** setting. When pagination is hidden, vertical swipes move by the next or previous visible batch; crossing the end or beginning of the fetched page advances to Next or Previous. **Refresh remains available**, and physical-button navigation is unchanged.
+- **Capability-aware/enhanced firmware:** the same package automatically enables 16-item token-scoped catalog caching, native 1-bit BMP cover thumbnails, configurable list/grid layouts with a **3×2 grid default**, an explicit **Refresh** action, and improved QR/manual-join presentation. Prev/Next footer buttons are intentionally hidden; Up/Down hardware controls and touch swipes (where available) move through visible batches and cross catalog-page boundaries, while **Refresh remains available**.
 - Enhanced-only fields are declarative capabilities. Firmware that does not support them ignores them and continues using the baseline behavior from the same `device.json`.
 
 ## Runtime payload
@@ -41,7 +40,7 @@ plugin.js
 README.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.7.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.8.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
@@ -56,7 +55,7 @@ Plugin Hub is the preferred installation and update path.
 1. Enable the device plugin system if it is not already enabled.
 2. Open **Plugins** and launch **Plugin Hub**.
 3. Open the Community catalog and refresh it if needed.
-4. Find **Send2Ereader v0.1.7** and choose **Install** or **Update**.
+4. Find **Send2Ereader v0.1.8** and choose **Install** or **Update**.
 5. Open Send2Ereader from the device Plugins UI after installation.
 
 Plugin Hub discovers the published plugin release and handles the installable payload; users do not need to add a separate store URL manually. The versioned GitHub ZIP remains available as a manual installation fallback.
@@ -82,7 +81,7 @@ The one-time device code, the CrossPoint reader token, the browser uploader toke
 
 ## Catalog and refresh behavior
 
-The Send2Ereader picker contains a single neutral **Transfers** row. Opening it fetches the current session catalog. Version 0.1.7 requests up to **16 books per catalog page**.
+The Send2Ereader picker contains a single neutral **Transfers** row. Opening it fetches the current session catalog. Version 0.1.8 requests up to **16 books per catalog page**.
 
 ```text
 Transfers
@@ -92,9 +91,9 @@ Transfers
 
 On baseline firmware, the standard native list and normal pagination remain available. Re-entering **Transfers** or changing catalog pages performs another request, so additions and removals from the active web session can be reflected without changing the plugin package.
 
-On capability-aware/enhanced firmware, the same catalog can be shown as a list or grid with book covers. The footer provides **Refresh** independently of Prev/Next pagination, and refresh keeps the current browse context while fetching current session contents.
+On capability-aware/enhanced firmware, the same catalog defaults to a 3×2 cover grid using server-generated native 1-bit BMP thumbnails. Prev/Next footer buttons are hidden and **Refresh** remains centered. Up/Down hardware controls move through the next or previous visible batch; touch devices can use swipe **up** for the next batch and swipe **down** for the previous batch. At a fetched-page boundary, the same control advances to the next or previous catalog page.
 
-On touch-capable enhanced devices, **Hide pagination buttons** appears only when the firmware reports touch capability. With pagination hidden, swipe **up** moves to the next visible batch and swipe **down** moves to the previous visible batch. At a fetched-page boundary, the same gesture advances to Next or Previous. This is viewport scrolling, not cover-by-cover focus movement. Physical-button behavior is unchanged.
+Catalog pages and covers use a token-scoped SD cache. The first visit fetches missing data, revisiting a page reuses the cache, **Refresh** bypasses the current page cache, and each newly authorized Send2Ereader reader token gets a separate cache namespace.
 
 ## Session lifecycle
 
@@ -104,7 +103,7 @@ The native reader credential is intentionally ephemeral. CrossPoint stores the c
 /.pcat_tmp.json
 ```
 
-The reader token is embedded in that temporary response and is removed by the firmware when the native catalog/plugin flow is exited.
+The reader token is embedded in that temporary response. Baseline/nightly firmware already removes `/.pcat_tmp.json` when the native catalog flow exits. Enhanced firmware additionally honors `token.persist: false`, clears the ephemeral token on catalog entry/exit, and keeps the active value only in RAM while the catalog remains open—even when page caching moves the scratch response into the cache.
 
 On X3/X4, **Back from the book list returns to Transfers; Back from the Transfers picker exits Send2Ereader. Reopening Send2Ereader creates a new QR code and a new anonymous session.**
 
@@ -114,7 +113,7 @@ The server-side session itself remains available for the lifetime configured by 
 
 ## Pagination and the firmware token-file limit
 
-CrossPoint reloads its bearer token from `/.pcat_tmp.json` before catalog requests, so Send2Ereader keeps the native response compact. Version 0.1.7 uses a 16-item catalog page size while preserving the session-scoped token and filename-extension behavior.
+Baseline/nightly firmware reloads the bearer token from `/.pcat_tmp.json` before catalog requests and deletes that scratch file on exit. Enhanced firmware may keep the same explicitly ephemeral token in RAM for the open catalog session so token-scoped caching can safely move the scratch response. Version 0.1.8 uses a 16-item catalog page size while preserving session isolation and filename-extension behavior.
 
 Enhanced layouts may display fewer than 16 books at once depending on the configured grid/list viewport. Swipe navigation advances through those visible batches inside the already fetched page before crossing the boundary to the next or previous catalog page.
 

@@ -2,6 +2,17 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.8] - 2026-10-14
+
+### Changed
+
+- Promote the nightly/Razor-Crest validated ephemeral-token fallback: use firmware-owned `/.pcat_tmp.json` with `token.persist: false`, so baseline/nightly firmware deletes the credential on exit while enhanced firmware keeps it only in RAM for the open catalog session.
+- Add token-scoped SD caching for catalog pages and covers, preserving revisits within one authorized session while separating every newly authorized reader token into its own cache namespace.
+- Switch catalog covers to the server-generated `crosspoint-thumb` native 1-bit BMP variant, avoiding JPEG/PNG decode, resize, and dithering work on enhanced readers.
+- Default enhanced browsing to a 3×2 cover grid and hide Prev/Next footer buttons; Refresh remains available, with hardware Up/Down and touch swipes handling visible-batch and page-boundary navigation.
+- Remove the obsolete touch-only `Hide pagination buttons` setting now that the tested dual-mode package handles navigation consistently across supported hardware.
+- Update Plugin Hub and session-lifecycle documentation for the single package tested successfully on nightly firmware, Razor-Crest, and nightly again.
+
 ## [0.1.7] - 2026-10-13
 
 ### Changed

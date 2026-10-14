@@ -1,8 +1,9 @@
 {
-  "title": "Send2Ereader v0.1.7",
+  "title": "Send2Ereader v0.1.8",
   "token": {
     "file": "/.pcat_tmp.json",
-    "path": "t"
+    "path": "t",
+    "persist": false
   },
   "browse": {
     "format": "json",
@@ -31,16 +32,16 @@
     "grid_page_size": "16",
     "list_page_size": "16",
     "list_thumbnail": "{cfg.list_thumbnails}",
-    "hide_pagination": "{cfg.hide_pagination}",
+    "hide_pagination": "true",
     "selection_style": "{cfg.selection_style}",
     "image": {
-      "url": "https://send.techy-notes.com/api/v1/files/{id}/cover?variant=crosspoint",
+      "url": "https://send.techy-notes.com/api/v1/files/{id}/cover?variant=crosspoint-thumb",
       "method": "GET",
       "headers": {
         "Authorization": "Bearer {token}",
         "Accept": "image/*"
       },
-      "format": "auto",
+      "format": "bmp",
       "radius": 4
     }
   },
@@ -79,7 +80,7 @@
   },
   "description": "Create a Send2Ereader receive session, scan or manually join it from another device, then browse and download transferred books.",
   "author": "Jadehawk",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "config": {
     "file": "settings.json"
   },
@@ -103,7 +104,7 @@
       "key": "layout",
       "title": "Layout",
       "type": "choice",
-      "default": "list",
+      "default": "grid",
       "options": [
         {
           "title": "List",
@@ -119,7 +120,7 @@
       "key": "grid_columns",
       "title": "Grid columns",
       "type": "choice",
-      "default": "2",
+      "default": "3",
       "options": [
         {
           "title": "1 column",
@@ -166,15 +167,6 @@
       "default": true
     },
     {
-      "key": "hide_pagination",
-      "title": "Hide pagination buttons",
-      "type": "toggle",
-      "default": false,
-      "visible_if": {
-        "device_capability": "touch"
-      }
-    },
-    {
       "key": "selection_style",
       "title": "Row highlight",
       "type": "choice",
@@ -198,5 +190,10 @@
         }
       ]
     }
-  ]
+  ],
+  "cache": {
+    "enabled": true,
+    "scope": "token",
+    "limit_mb": "8"
+  }
 }
