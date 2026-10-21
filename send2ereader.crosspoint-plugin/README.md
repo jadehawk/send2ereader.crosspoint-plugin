@@ -6,7 +6,7 @@ No Send2Ereader account is required for the normal receive workflow.
 
 ## Dual-mode compatibility
 
-Version **0.1.9** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
+Version **0.1.10** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
 
 - **Baseline plugin firmware:** keeps the core native receive flow: create a session, show the QR/session code, browse transferred books in the standard list UI, page through the catalog, and download books to `/Send2Ereader`.
 - **Capability-aware/enhanced firmware:** the same package automatically enables 16-item token-scoped catalog caching, native 1-bit BMP cover thumbnails, configurable list/grid layouts with a **3×2 grid default**, an explicit **Refresh** action, and improved QR/manual-join presentation. Prev/Next footer buttons are intentionally hidden; Up/Down hardware controls and touch swipes (where available) move through visible batches and cross catalog-page boundaries, while **Refresh remains available**.
@@ -41,7 +41,7 @@ README.md
 DETAILS.md
 ```
 
-GitHub releases also provide a versioned package such as `send2ereader-0.1.9.zip`. Extracting that archive at the root of the SD card creates:
+GitHub releases also provide a versioned package such as `send2ereader-0.1.10.zip`. Extracting that archive at the root of the SD card creates:
 
 ```text
 /plugins/send2ereader/
@@ -56,7 +56,7 @@ Plugin Hub is the preferred installation and update path.
 1. Enable the device plugin system if it is not already enabled.
 2. Open **Plugins** and launch **Plugin Hub**.
 3. Open the Community catalog and refresh it if needed.
-4. Find **Send2Ereader v0.1.9** and choose **Install** or **Update**.
+4. Find **Send2Ereader** and choose **Install** or **Update**.
 5. Open Send2Ereader from the device Plugins UI after installation.
 
 Plugin Hub discovers the published plugin release and handles the installable payload; users do not need to add a separate store URL manually. The versioned GitHub ZIP remains available as a manual installation fallback.
@@ -82,7 +82,7 @@ The one-time device code, the CrossPoint reader token, the browser uploader toke
 
 ## Catalog and refresh behavior
 
-The Send2Ereader picker contains a single neutral **Transfers** row. Opening it fetches the current session catalog. Version 0.1.9 requests up to **16 books per catalog page**.
+The Send2Ereader picker contains a single neutral **Transfers** row. Opening it fetches the current session catalog. Version 0.1.10 requests up to **16 books per catalog page**.
 
 ```text
 Transfers
@@ -114,7 +114,7 @@ The server-side session itself remains available for the lifetime configured by 
 
 ## Pagination and the firmware token-file limit
 
-Baseline/nightly firmware reloads the bearer token from `/.pcat_tmp.json` before catalog requests and deletes that scratch file on exit. Enhanced firmware may keep the same explicitly ephemeral token in RAM for the open catalog session so token-scoped caching can safely move the scratch response. Version 0.1.9 uses a 16-item catalog page size while preserving session isolation and filename-extension behavior.
+Baseline/nightly firmware reloads the bearer token from `/.pcat_tmp.json` before catalog requests and deletes that scratch file on exit. Enhanced firmware may keep the same explicitly ephemeral token in RAM for the open catalog session so token-scoped caching can safely move the scratch response. Version 0.1.10 uses a 16-item catalog page size while preserving session isolation and filename-extension behavior.
 
 Enhanced layouts may display fewer than 16 books at once depending on the configured grid/list viewport. Swipe navigation advances through those visible batches inside the already fetched page before crossing the boundary to the next or previous catalog page.
 

@@ -2,6 +2,13 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.10] - 2026-10-21
+
+### Changed
+
+- Remove the version suffix from Send2Ereader display titles in the plugin, device, and repository catalog; versions remain available in the manifest metadata and WebUI.
+- Keep the existing transfer/session behavior unchanged.
+
 ## [0.1.9] - 2026-10-14
 
 ### Changed
