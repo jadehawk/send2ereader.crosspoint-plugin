@@ -2,6 +2,13 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.11] - 2026-10-27
+
+### Fixed
+
+- Keep the Transfers picker on baseline CrossPoint by adding an instructional second row that opens the same catalog, so Back and re-entry can refresh the session list.
+- Hide that fallback row when firmware supports `browse.lists[].hide_if.plugin_capability` and advertises `catalog.refresh`; native Refresh remains available.
+
 ## [0.1.10] - 2026-10-21
 
 ### Changed

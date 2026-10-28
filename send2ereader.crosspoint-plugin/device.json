@@ -17,6 +17,12 @@
     "lists": [
       {
         "title": "Transfers"
+      },
+      {
+        "title": "Select Transfers to refresh",
+        "hide_if": {
+          "plugin_capability": "catalog.refresh"
+        }
       }
     ],
     "fields": {
@@ -80,7 +86,7 @@
   },
   "description": "Create a Send2Ereader receive session, scan or manually join it from another device, then browse and download transferred books.",
   "author": "Jadehawk",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "config": {
     "file": "settings.json"
   },

@@ -75,22 +75,23 @@ Books are downloaded to:
 4. Scan the QR code with a phone, or enter the displayed code in the configured Send2Ereader web UI. The default server is <https://send.techy-notes.com>.
 5. When the phone/browser successfully joins that session, the pending CrossPoint authorization is approved automatically.
 6. On its next poll, normally within about three seconds, the reader receives its session-scoped reader token and leaves the QR screen.
-7. The reader opens a single **Transfers** row. Upload, add, or remove books from the phone/browser as needed.
-8. Open **Transfers** to fetch the current book catalog and select a book to download. Current CrossPoint firmware also uses the selected list-row title as the next catalog page title, so the neutral **Transfers** label is intentional.
+7. The reader opens a **Transfers** row. Baseline firmware also displays **Select Transfers to refresh** as an instructional fallback row. Upload, add, or remove books from the phone/browser as needed.
+8. Open **Transfers** to fetch the current book catalog and select a book to download. On baseline firmware, either picker row opens the same catalog; press Back and choose **Transfers** to fetch it again.
 
 The one-time device code, the CrossPoint reader token, the browser uploader token, and the hidden session-owner token are separate credentials. The one-time device code is never reused as the catalog/download credential.
 
 ## Catalog and refresh behavior
 
-The Send2Ereader picker contains a single neutral **Transfers** row. Opening it fetches the current session catalog. Version 0.1.10 requests up to **16 books per catalog page**.
+The Send2Ereader picker declares two rows to prevent vanilla CrossPoint from automatically skipping the picker. The second row explains how to refresh, and both rows open the same session catalog. Firmware exposing `catalog.refresh` and supporting `browse.lists[].hide_if.plugin_capability` hides the instructional row while retaining the picker and native Refresh button. The catalog requests up to **16 books per page**.
 
 ```text
 Transfers
+Select Transfers to refresh  (baseline only)
 ```
 
 
 
-On baseline firmware, the standard native list and normal pagination remain available. Re-entering **Transfers** or changing catalog pages performs another request, so additions and removals from the active web session can be reflected without changing the plugin package.
+On baseline firmware, the standard native list and normal pagination remain available. Back from the book list returns to the two-row picker; choosing **Transfers** performs another request so new uploads and removals appear. The instruction row is still selectable because stock firmware does not support non-interactive catalog labels.
 
 On capability-aware/enhanced firmware, the same catalog defaults to a 3×2 cover grid using server-generated native 1-bit BMP thumbnails. Prev/Next footer buttons are hidden and **Refresh** remains centered. Up/Down hardware controls move through the next or previous visible batch; touch devices can use swipe **up** for the next batch and swipe **down** for the previous batch. At a fetched-page boundary, the same control advances to the next or previous catalog page.
 
@@ -106,7 +107,7 @@ The native reader credential is intentionally ephemeral. CrossPoint stores the c
 
 The reader token is embedded in that temporary response. Baseline/nightly firmware already removes `/.pcat_tmp.json` when the native catalog flow exits. Enhanced firmware additionally honors `token.persist: false`, clears the ephemeral token on catalog entry/exit, and keeps the active value only in RAM while the catalog remains open—even when page caching moves the scratch response into the cache.
 
-On X3/X4, **Back from the book list returns to Transfers; Back from the Transfers picker exits Send2Ereader. Reopening Send2Ereader creates a new QR code and a new anonymous session.**
+On X3/X4, **Back from the book list returns to the Transfers picker; Back from the picker exits Send2Ereader. Reopening Send2Ereader creates a new QR code and a new anonymous session.**
 
 This is intentional. The native quick-transfer workflow does not persist a reader token for reuse across plugin launches.
 
