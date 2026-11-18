@@ -6,11 +6,12 @@ No Send2Ereader account is required for the normal receive workflow.
 
 ## Dual-mode compatibility
 
-Version **0.1.10** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
+Version **0.1.12** is one Plugin Hub package that adapts to the capabilities exposed by the installed firmware; there is no separate Razor-Crest plugin build.
 
 - **Baseline plugin firmware:** keeps the core native receive flow: create a session, show the QR/session code, browse transferred books in the standard list UI, page through the catalog, and download books to `/Send2Ereader`.
 - **Capability-aware/enhanced firmware:** the same package automatically enables 16-item token-scoped catalog caching, native 1-bit BMP cover thumbnails, configurable list/grid layouts with a **3×2 grid default**, an explicit **Refresh** action, and improved QR/manual-join presentation. Prev/Next footer buttons are intentionally hidden; Up/Down hardware controls and touch swipes (where available) move through visible batches and cross catalog-page boundaries, while **Refresh remains available**.
 - Enhanced-only fields are declarative capabilities. Firmware that does not support them ignores them and continues using the baseline behavior from the same `device.json`.
+- **Optional target identification (0.1.12):** firmware exposing the `{device_model}` request placeholder reports its public hardware profile in the native authorization request. The server returns the validated target model to the joined browser, which can select the correct image-sizing profile. Legacy firmware sends an unresolved placeholder and remains fully supported via a generic profile. Browser-side `plugin.js` sessions may report `/api/status` `deviceModel` when that endpoint is present. No serial numbers are transmitted.
 
 ## Runtime payload
 

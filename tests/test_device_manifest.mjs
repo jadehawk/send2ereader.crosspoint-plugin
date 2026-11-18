@@ -6,6 +6,13 @@ const device = JSON.parse(
   await readFile(new URL('../send2ereader.crosspoint-plugin/device.json', import.meta.url), 'utf8'),
 );
 
+test('native authorization requests the optional firmware hardware profile', () => {
+  const payload = JSON.parse(device.auth.request.body);
+  assert.equal(payload.client_id, 'send2ereader-crosspoint');
+  assert.equal(payload.device_model, '{device_model}');
+  assert.equal(device.auth.request.method, 'POST');
+});
+
 test('baseline firmware retains both list-picker rows for manual refresh', () => {
   const lists = device.browse.lists;
   assert.equal(lists.length, 2);

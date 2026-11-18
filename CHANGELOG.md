@@ -2,6 +2,14 @@
 
 All notable changes to the Send2Ereader CrossPoint plugin are documented here.
 
+## [0.1.12] - 2026-11-17
+
+### Improved
+
+- Native device authorization reports the public hardware model through `{device_model}` when supported by firmware, so the joining Send2Ereader uploader can select an accurate screen-resolution profile.
+- Browser-side plugin session creation reads `/api/status` and optionally reports its `deviceModel`. Older firmware continues working without identification; the server uses its generic fallback.
+- No device identifiers, secrets, or serial numbers are transmitted.
+
 ## [0.1.11] - 2026-10-27
 
 ### Fixed

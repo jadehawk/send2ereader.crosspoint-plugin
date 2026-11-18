@@ -369,6 +369,20 @@ CrossPoint.registerPlugin(async (container, api) => {
     return next;
   }
 
+  async function readerHardwareModel() {
+    // Browser plugin.js runs on the reader's own WebUI origin. Older firmware
+    // may omit /api/status or deviceModel: that is non-fatal.
+    try {
+      const response = await fetch('/api/status', { cache: 'no-store' });
+      if (!response.ok) return null;
+      const info = await response.json();
+      return typeof info?.deviceModel === 'string' && info.deviceModel.length <= 64
+        ? info.deviceModel : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function active() {
     return !!(state.sessionId && state.catalogKey);
   }
@@ -627,11 +641,12 @@ CrossPoint.registerPlugin(async (container, api) => {
     try {
       const next = settingsFromUi();
       status('Creating receive session...');
+      const deviceModel = await readerHardwareModel();
       const created = await requestJson(
         'POST',
         next.serverUrl + '/api/v1/sessions',
         { 'Content-Type': 'application/json', Accept: 'application/json' },
-        '{}',
+        JSON.stringify(deviceModel ? { deviceModel } : {}),
         [201],
       );
       const key = apiKey(created, 'owner');

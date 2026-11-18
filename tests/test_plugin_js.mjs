@@ -37,13 +37,16 @@ function decodeLastConfigWrite(writes) {
   return JSON.parse(Buffer.from(write.data, 'base64').toString('utf8'));
 }
 
-async function runPlugin(apiDir, settingsServer = PRODUCTION_SERVER) {
+async function runPlugin(apiDir, settingsServer = PRODUCTION_SERVER, deviceModel = null) {
   let renderPlugin;
   const document = fakeDocument();
   const downloadPaths = [];
   const writes = [];
+  const serverRequests = [];
 
   const fetch = async (url) => {
+    if (url === '/api/status') return { ok: Boolean(deviceModel), async json() { return { deviceModel }; } };
+    if (String(url).startsWith('/api/files?')) return { ok: true, async json() { return []; } };
     if (String(url).startsWith('/download?path=')) {
       const path = new URL(url, 'http://device').searchParams.get('path');
       downloadPaths.push(path);
@@ -120,7 +123,18 @@ async function runPlugin(apiDir, settingsServer = PRODUCTION_SERVER) {
       writes.push({ path, data });
       return { ok: true };
     },
-    async relay(method, url) {
+    async relay(method, url, headers, body) {
+      serverRequests.push({ method, url, body });
+      if (method === 'POST' && url.endsWith('/api/v1/sessions')) {
+        return { status: 201, body: JSON.stringify({
+          id: 'created-session', ownerToken: 'owner-token', joinCode: 'ABC123',
+          expiresAt: '2099-01-01T00:00:00.000Z',
+        }) };
+      }
+      if (method === 'POST' && url.endsWith('/qr')) return { status: 200, body: '<svg></svg>' };
+      if (method === 'GET' && url.includes('/catalog.json')) {
+        return { status: 200, body: JSON.stringify({ items: [], itemCount: 0 }) };
+      }
       assert.equal(method, 'GET');
       assert.match(url, /send2ereader\.crosspoint-plugin\/releases\/latest$/);
       return { status: 200, body: JSON.stringify({ tag_name: 'v0.1.5' }) };
@@ -131,8 +145,21 @@ async function runPlugin(apiDir, settingsServer = PRODUCTION_SERVER) {
   };
 
   await renderPlugin({ innerHTML: '' }, api);
-  return { document, downloadPaths, writes };
+  return { document, downloadPaths, writes, serverRequests };
 }
+
+test('reader WebUI session creation reports hardware model only when available', async () => {
+  for (const [model, expected] of [['x4pro', { deviceModel: 'x4pro' }], [null, {}]]) {
+    const result = await runPlugin(undefined, PRODUCTION_SERVER, model);
+    await result.document.elements.get('s2e-create').onclick();
+    const request = result.serverRequests.find(({ method, url }) =>
+      method === 'POST' && url.endsWith('/api/v1/sessions'));
+    assert.ok(request, 'create session must call the server');
+    assert.deepEqual(JSON.parse(request.body), expected);
+    const saved = decodeLastConfigWrite(result.writes);
+    assert.equal(saved.sessionId, 'created-session');
+  }
+});
 
 test('legacy firmware keeps the historical manifest path and locks the production server', async () => {
   const result = await runPlugin();
